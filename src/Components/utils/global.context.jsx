@@ -1,15 +1,46 @@
-import { createContext } from "react";
+import { createContext, useContext, useState } from "react";
 
-export const initialState = {theme: "", data: []}
+export const initialState = {
+    themes: {
+        claro: {
+            bgHome: "white",
+            bgNavbarFooter: "rgb(172, 224, 231)",
+            color: "black"
+        },
+        oscuro: {
+            bgNavbarFooter: "#161616",
+            bgHome: "#7f7f7f",
+            color: "white"
+        }
+    },
+}
 
-export const ContextGlobal = createContext(undefined);
+export const ContextGlobal = createContext(initialState);
 
 export const ContextProvider = ({ children }) => {
-  //Aqui deberan implementar la logica propia del Context, utilizando el hook useMemo
 
-  return (
-    <ContextGlobal.Provider value={{}}>
-      {children}
-    </ContextGlobal.Provider>
-  );
+    const [Theme, setTheme] = useState(initialState.themes.claro)
+    const handleThemeChange = () => {
+        if (Theme === initialState.themes.oscuro) setTheme(initialState.themes.claro)
+        if (Theme === initialState.themes.claro) setTheme(initialState.themes.oscuro)
+    }
+
+    const [favs, setfavs] = useState([])
+
+    return (
+        <ContextGlobal.Provider value=
+            {{
+                Theme,
+                handleThemeChange,
+                favs,
+                setfavs
+            }}>
+            {children}
+        </ContextGlobal.Provider>
+    );
 };
+
+export const useGlobalContext = () => {
+    return useContext(ContextGlobal)
+}
+
